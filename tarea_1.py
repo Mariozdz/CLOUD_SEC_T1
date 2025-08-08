@@ -42,47 +42,48 @@ with Diagram("Digital Identity", show=False):
             waf = WAF("WAF Policy")
             api_gateway = APIGateway("Amazon API Gateway")
         
-        with Cluster("Kubernets: Application Layer"):
+        with Cluster("Subnet K8s"):
+            with Cluster("Kubernets: Application Layer"):
             
-            ingresController = Ingress("Ingress Controller")
-            network_policy = NetworkPolicy("Network Policy")
+                ingresController = Ingress("Ingress Controller")
+                network_policy = NetworkPolicy("Network Policy")
 
-            with Cluster("Namespace: Capp services", direction="TB"):
-                ingress = Ingress("Ingress")
-                capp = Pod("cApp Service")
-            
-            with Cluster ("Namespace: Certificates"):
-                ingress_cert = Ingress("Ingress")
-                cert_manager = Custom("Cert manager", "./icons/cert-manager-icon.png")
+                with Cluster("Namespace: Capp services", direction="TB"):
+                    ingress = Ingress("Ingress")
+                    capp = Pod("cApp Service")
+                
+                with Cluster ("Namespace: Certificates"):
+                    ingress_cert = Ingress("Ingress")
+                    cert_manager = Custom("Cert manager", "./icons/cert-manager-icon.png")
 
-            with Cluster ("Namespace: Secrets"):
-                secret_handler = Secret("Secrets Handler")
+                with Cluster ("Namespace: Secrets"):
+                    secret_handler = Secret("Secrets Handler")
 
-            with Cluster ("Namespace: User services"):
-                user = Pod("User service")
+                with Cluster ("Namespace: User services"):
+                    user = Pod("User service")
 
-            with Cluster ("Namespace: Wallet services"):
-                wallet = Pod("Wallet service")
+                with Cluster ("Namespace: Wallet services"):
+                    wallet = Pod("Wallet service")
 
-            
-            with Cluster("Namespace: Verifier services"):
-                verifier = Pod("Verifier service")
+                
+                with Cluster("Namespace: Verifier services"):
+                    verifier = Pod("Verifier service")
 
-            with Cluster("Namespace: Issuer services"):
-                issuer = Pod("Issuer service")
-            
-            with Cluster("Namespace: Trusted services"):
-                trust_agent = Pod("Trust agent")
-                trusted_mail_service = Pod("Trusted notification service")
-            
-            with Cluster("Namespace: External Services"):
-                notification_service = Pod("Notification service")
+                with Cluster("Namespace: Issuer services"):
+                    issuer = Pod("Issuer service")
+                
+                with Cluster("Namespace: Trusted services"):
+                    trust_agent = Pod("Trust agent")
+                    trusted_mail_service = Pod("Trusted notification service")
+                
+                with Cluster("Namespace: External Services"):
+                    notification_service = Pod("Notification service")
         
-        with Cluster("Database Layer"):
+        with Cluster("Database Layer subnet"):
             db = PostgreSQL("Amazon RDS")
             blockchain = Custom("HyperLedger Fabric", "./icons/hyper_ledger.png")
         
-        with Cluster("Services"):
+        with Cluster("Services Subnet"):
             email_external = SimpleEmailServiceSes("Simple Email Service")
             cert_authority = CertificateAuthority("Private CA")
 
