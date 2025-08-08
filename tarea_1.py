@@ -8,6 +8,12 @@ from diagrams.k8s.infra import ETCD
 from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.compute import Server
 from diagrams.onprem.client import Users
+from diagrams.custom import Custom
+from urllib.request import urlretrieve
+from diagrams.k8s.podconfig import Secret
+from diagrams.aws.engagement import SimpleEmailServiceSes
+from diagrams.aws.security import CertificateAuthority
+from diagrams.k8s.network import NetworkPolicy
 
 
 with Diagram("Digital Identity", show=False):
@@ -38,18 +44,26 @@ with Diagram("Digital Identity", show=False):
         
         with Cluster("Kubernets: Application Layer"):
             
-            # kube = ETCD("K8S")
             ingresController = Ingress("Ingress Controller")
+            network_policy = NetworkPolicy("Network Policy")
 
-            with Cluster("Namespace: Wallet services", direction="TB"):
+            with Cluster("Namespace: Capp services", direction="TB"):
                 ingress = Ingress("Ingress")
-
-                wallet = Pod("Wallet service")
                 capp = Pod("cApp Service")
-                cert_vol = PV("Volume") 
             
+            with Cluster ("Namespace: Certificates"):
+                ingress_cert = Ingress("Ingress")
+                cert_manager = Custom("Cert manager", "./icons/cert-manager-icon.png")
+
+            with Cluster ("Namespace: Secrets"):
+                secret_handler = Secret("Secrets Handler")
+
             with Cluster ("Namespace: User services"):
                 user = Pod("User service")
+
+            with Cluster ("Namespace: Wallet services"):
+                wallet = Pod("Wallet service")
+
             
             with Cluster("Namespace: Verifier services"):
                 verifier = Pod("Verifier service")
@@ -66,7 +80,11 @@ with Diagram("Digital Identity", show=False):
         
         with Cluster("Database Layer"):
             db = PostgreSQL("Amazon RDS")
-            blockchain = Server("HyperLedger Fabric")  # placeholder
+            blockchain = Custom("HyperLedger Fabric", "./icons/hyper_ledger.png")
+        
+        with Cluster("Services"):
+            email_external = SimpleEmailServiceSes("Simple Email Service")
+            cert_authority = CertificateAuthority("Private CA")
 
     # Connections based on edges with transparent color are not valid - related
 
@@ -79,10 +97,15 @@ with Diagram("Digital Identity", show=False):
     dns_zone_3 >> Edge(color="transparent") >> api_gateway
     api_gateway >> ingresController
     ingresController >> ingress
+    ingresController >> ingress_cert
+    ingress_cert >> Edge(color="transparent") >> cert_manager
+    cert_manager >> secret_handler
+    cert_manager >> cert_authority
     ingress >> capp
-    capp >> Edge(label="Read blockchain") >> user
+    capp >> secret_handler
+    capp >> user
     user >> Edge(label="Read") >> blockchain
-    cert_vol >> Edge(color="transparent") >> capp
+    # cert_vol >> Edge(color="transparent") >> capp
     capp >> verifier
     capp >> wallet
     capp  >> trust_agent
@@ -91,5 +114,8 @@ with Diagram("Digital Identity", show=False):
     wallet >> verifier
     # notification_service >> trust_agent
     issuer >> Edge(color="transparent") >> trust_agent
+    issuer >> notification_service
+    verifier >> notification_service
     trusted_mail_service >> Edge(color="transparent") >> notification_service
     notification_service >> Edge(color="transparent") >> db
+    notification_service >> email_external
