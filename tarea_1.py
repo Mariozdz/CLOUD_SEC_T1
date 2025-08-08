@@ -14,6 +14,7 @@ from diagrams.k8s.podconfig import Secret
 from diagrams.aws.engagement import SimpleEmailServiceSes
 from diagrams.aws.security import CertificateAuthority
 from diagrams.k8s.network import NetworkPolicy
+from diagrams.aws.management import Cloudwatch
 
 
 with Diagram("Digital Identity", show=False):
@@ -86,6 +87,7 @@ with Diagram("Digital Identity", show=False):
         with Cluster("Services Subnet"):
             email_external = SimpleEmailServiceSes("Simple Email Service")
             cert_authority = CertificateAuthority("Private CA")
+            cloud_watch = Cloudwatch("Monitoring service")
 
     # Connections based on edges with transparent color are not valid - related
 
@@ -120,3 +122,5 @@ with Diagram("Digital Identity", show=False):
     trusted_mail_service >> Edge(color="transparent") >> notification_service
     notification_service >> Edge(color="transparent") >> db
     notification_service >> email_external
+    blockchain >> Edge(color="transparent") >> db
+
