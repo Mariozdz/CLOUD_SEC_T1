@@ -21,6 +21,10 @@ Esta opción es de desarrollo que de modificación. De igual manera que con los 
 
 Separar algunas capas y servicios dentro de la VPC permite un control más estricto sobre quien o que puede acceder a algún servicio mediante la implementación de reglas de firewall o incluso listas de acceso (incluyendo restricción de puertos y servicios). Esto evitaría que si un servicio externo al cluster (como ejemplo el servicio de mail o bases de datos) se ve vulnerado, sea más difícil o imposible moverse a otros servicios a diferencia de si estuviera en la misma subred, básicamente se puede definir como una reducción en la superficie de ataque. 
 
+# 4 - Monitoreo
+
+Implementar algún servicio general de monitoreo como cloudwatch que reciba información y alertas de todas las secciones, dentro del cluster podria funcionar como un servicio que recopile y envie los datos necesarios. Este apartado no está implementado en la arquitectura y necesita desarrollo.
+
 
 # Factor de seguridad:
 
