@@ -23,8 +23,7 @@ Separar algunas capas y servicios dentro de la VPC permite un control más estri
 
 # 4 - Monitoreo
 
-Implementar algún servicio general de monitoreo como cloudwatch que reciba información y alertas de todas las secciones, dentro del cluster podria funcionar como un servicio que recopile y envie los datos necesarios. Este apartado no está implementado en la arquitectura y necesita desarrollo.
-
+Implementar algún servicio general de monitoreo como cloudwatch que reciba información y alertas de todas las secciones, dentro del cluster podría funcionar como un servicio que recopile y envíe los datos necesarios. Este apartado no está implementado en la arquitectura y necesita desarrollo.
 
 # Factor de seguridad:
 
