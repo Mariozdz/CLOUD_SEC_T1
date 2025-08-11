@@ -42,6 +42,8 @@ with Diagram("Digital Identity", show=False):
             cloudfront = CloudFront("Amazon CloudFront")
             waf = WAF("WAF Policy")
             api_gateway = APIGateway("Amazon API Gateway")
+            api_gateway - waf
+            waf - cloudfront
         
         with Cluster("Subnet K8s"):
             with Cluster("Kubernets: Application Layer"):
@@ -91,34 +93,37 @@ with Diagram("Digital Identity", show=False):
 
     # Connections based on edges with transparent color are not valid - related
 
-    issuer >> legacy_issuer
-    verifier >> legacy_verifier
+    issuer >> Edge(color="lightgreen") >> legacy_issuer
+    verifier >> Edge(color="darkgreen") >> legacy_verifier
 
+    dns_zone_1 >> Edge(color="lightblue") >> api_gateway
+    dns_zone_2 >> Edge(color="lightblue") >> api_gateway
+    dns_zone_3 >> Edge(color="lightblue") >> api_gateway
     dns_policy >> Edge(color="transparent") >> dns_zone_1
-    dns_policy >> Edge(color="transparent") >> dns_zone_2
+    dns_policy - dns_zone_2
     dns_policy >> Edge(color="transparent") >> dns_zone_3
     dns_zone_3 >> Edge(color="transparent") >> api_gateway
     api_gateway >> ingresController
     ingresController >> ingress
     ingresController >> ingress_cert
-    ingress_cert >> Edge(color="transparent") >> cert_manager
+    ingress_cert - cert_manager
     cert_manager >> secret_handler
     cert_manager >> cert_authority
     ingress >> capp
-    capp >> secret_handler
-    capp >> user
-    user >> Edge(label="Read") >> blockchain
+    capp << secret_handler
+    capp >> Edge(color="red") >> user
+    user >> Edge(label="Read", color="purple") >> blockchain
     # cert_vol >> Edge(color="transparent") >> capp
-    capp >> verifier
-    capp >> wallet
-    capp  >> trust_agent
-    wallet >> blockchain
-    wallet >> issuer
-    wallet >> verifier
+    capp >> Edge(color="red") >> verifier
+    capp >> Edge(color="red") >> wallet
+    capp  >> Edge(color="red") >> trust_agent
+    wallet >> Edge(color="orange") >> blockchain
+    wallet >> Edge(color="orange") >> issuer
+    wallet >> Edge(color="orange") >> verifier
     # notification_service >> trust_agent
     issuer >> Edge(color="transparent") >> trust_agent
-    issuer >> notification_service
-    verifier >> notification_service
+    issuer >> Edge(color="lightgreen") >>  notification_service
+    verifier >> Edge(color="darkgreen") >> notification_service
     trusted_mail_service >> Edge(color="transparent") >> notification_service
     notification_service >> Edge(color="transparent") >> db
     notification_service >> email_external
